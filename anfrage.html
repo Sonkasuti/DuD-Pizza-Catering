@@ -153,7 +153,7 @@ footer a { color: var(--gold); text-decoration: none; }
   <div class="hero-inner">
     <div class="hero-badge">🔥 Mobiles Pizza-Catering</div>
     <h1>Ein Stück <em>Italia</em><br>zu eurem Event</h1>
-    <p class="hero-sub">Pizza frisch gebacken, duftend und live vor euren Gästen zubereitet — verschiedene Pizzasorten ganz nach euren Wünschen und Absprache.</p>
+    <p class="hero-sub">Pizza frisch gebacken, duftend und live vor euren Gästen zubereitet.</p>
     <div class="ornament"><div class="ornament-line"></div><span>🌿</span><div class="ornament-line"></div></div>
   </div>
 </section>
@@ -161,7 +161,7 @@ footer a { color: var(--gold); text-decoration: none; }
   <div class="features-inner">
     <div class="feature"><span>🍕</span> Pizzasorten nach Absprache</div>
     <div class="feature"><span>👨‍🍳</span> Live-Cooking vor Ort</div>
-    <div class="feature"><span>🎉</span> Jede Feier willkommen</div>
+
   </div>
 </div>
 <div class="wave"><svg viewBox="0 0 1440 55" preserveAspectRatio="none" height="55" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 C360,55 1080,55 1440,0 L1440,55 L0,55 Z" fill="#fdf8f0"/></svg></div>
@@ -182,7 +182,7 @@ footer a { color: var(--gold); text-decoration: none; }
       </div>
       <div class="p-step" id="ps-3">
         <div class="p-circle">3</div>
-        <div class="p-label">Wünsche</div>
+        <div class="p-label">Details</div>
       </div>
       <div class="p-step" id="ps-4">
         <div class="p-circle">✓</div>
@@ -298,27 +298,18 @@ footer a { color: var(--gold); text-decoration: none; }
           </select>
         </div>
       </div>
-      <div class="field">
-        <label>Habt ihr bereits Pizzawünsche?</label>
-        <select id="f-pizzawunsch">
-          <option>Noch keine Vorstellung — wir besprechen es gerne</option>
-          <option>Ja, ich habe konkrete Wünsche (s. Anmerkungen)</option>
-          <option>Vegetarisch bevorzugt</option>
-          <option>Mix aus Fleisch und vegetarisch</option>
-        </select>
-        <div class="input-hint">Endgültige Sortenauswahl erfolgt in gemeinsamer Absprache.</div>
-      </div>
+
     </div>
     <div class="wizard-nav">
       <button class="btn btn-back" onclick="goBack(2)">← Zurück</button>
-      <button class="btn btn-next" onclick="goNext(2)">Weiter — Wünsche →</button>
+      <button class="btn btn-next" onclick="goNext(2)">Weiter — Details →</button>
     </div>
   </div>
 
   <!-- SCHRITT 3: WÜNSCHE -->
   <div class="w-step" id="step-3">
     <div class="card">
-      <div class="card-title"><div class="step-num">3</div> Eure Wünsche &amp; Besonderheiten</div>
+      <div class="card-title"><div class="step-num">3</div> Details &amp; Besonderheiten</div>
       <div class="field">
         <label>Anmerkungen / Sonderwünsche</label>
         <textarea id="f-anmerkungen" placeholder="Besondere Pizzawünsche, Unverträglichkeiten, Ideen für den Abend — alles was euch wichtig ist..."></textarea>
@@ -486,7 +477,7 @@ function getValues() {
     ort:        document.getElementById('f-ort').value.trim(),
     art:        document.getElementById('f-art').value,
     location:   document.getElementById('f-location').value,
-    pizzawunsch:document.getElementById('f-pizzawunsch').value,
+
     anmerkungen:document.getElementById('f-anmerkungen').value.trim(),
     allergien:  document.getElementById('f-allergien').value,
     anfahrt:    document.getElementById('f-anfahrt').value,
@@ -514,6 +505,9 @@ function submitAnfrage() {
     + 'ART: ' + d.art + '\n'
     + 'LOCATION: ' + d.location + '\n'
     + 'QUELLE: ' + d.quelle + '\n'
+    + 'ALLERGIEN: ' + d.allergien + '\n'
+    + 'ANFAHRT: ' + d.anfahrt + '\n'
+    + 'STROM: ' + d.strom + '\n'
     + 'ANMERKUNGEN: ' + (d.anmerkungen||'-') + '\n'
     + '##ENDE##';
 
@@ -531,7 +525,6 @@ function submitAnfrage() {
     + 'Art:         ' + d.art + '\n'
     + 'Location:    ' + d.location + '\n\n'
     + 'DETAILS\n'
-    + 'Pizzawunsch: ' + d.pizzawunsch + '\n'
     + 'Allergien:   ' + d.allergien + '\n'
     + 'Anfahrt:     ' + d.anfahrt + '\n'
     + 'Strom:       ' + d.strom + '\n'
