@@ -400,6 +400,11 @@
       <div class="field"><label class="field-label">Quelle</label><input type="text" id="a-quelle" placeholder="—" readonly style="background:var(--surface-alt);"></div>
     </div>
     <div class="field"><label class="field-label">Anmerkungen</label><textarea id="a-anmerkungen" rows="2" readonly style="background:var(--surface-alt);"></textarea></div>
+    <div class="grid3">
+      <div class="field"><label class="field-label">Allergien</label><input type="text" id="a-allergien-d" placeholder="—" readonly style="background:var(--surface-alt);"></div>
+      <div class="field"><label class="field-label">Anfahrt</label><input type="text" id="a-anfahrt-d" placeholder="—" readonly style="background:var(--surface-alt);"></div>
+      <div class="field"><label class="field-label">Strom</label><input type="text" id="a-strom-d" placeholder="—" readonly style="background:var(--surface-alt);"></div>
+    </div>
     <div class="actions" style="margin-top:1.25rem;">
       <button class="btn btn-primary" onclick="transferToModules()">→ Daten in alle Module übertragen</button>
       <button class="btn btn-secondary" onclick="buildAndShowConfirmMail()">✉️ Bestätigung an Kunden vorbereiten</button>
@@ -1411,7 +1416,7 @@ function smartPaste() {
   block = block.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
 
   // Known keys in order - extract value between this key and the next
-  var keys = ['NAME','EMAIL','TEL','DATUM','UHRZEIT','PERSONEN','ORT','ART','LOCATION','QUELLE','ANMERKUNGEN'];
+  var keys = ['NAME','EMAIL','TEL','DATUM','UHRZEIT','PERSONEN','ORT','ART','LOCATION','QUELLE','ALLERGIEN','ANFAHRT','STROM','ANMERKUNGEN'];
 
   function extractVal(key) {
     var search = key + ':';
@@ -1442,6 +1447,9 @@ function smartPaste() {
     art:         extractVal('ART'),
     location:    extractVal('LOCATION'),
     quelle:      extractVal('QUELLE'),
+    allergien:   extractVal('ALLERGIEN'),
+    anfahrt:     extractVal('ANFAHRT'),
+    strom:       extractVal('STROM'),
     anmerkungen: extractVal('ANMERKUNGEN'),
   };
 
@@ -1461,6 +1469,10 @@ function smartPaste() {
   setField('a-location',   parsedAnfrage.location);
   setField('a-quelle',     parsedAnfrage.quelle);
   setField('a-anmerkungen',parsedAnfrage.anmerkungen);
+  // Detailbogen direkt befüllen
+  setField('a-allergien-d',  parsedAnfrage.allergien);
+  setField('a-anfahrt-d',    parsedAnfrage.anfahrt);
+  setField('a-strom-d',      parsedAnfrage.strom);
 
   resultErr.style.display = 'none';
   resultOk.style.display  = 'block';
@@ -1490,6 +1502,8 @@ function transferToModules() {
   set('d-uhrzeit',       p.uhrzeit);
   set('d-personen',      p.personen);
   set('d-adresse',       p.ort);
+  // Neue Felder aus Wizard
+  if (document.getElementById('d-allergien-notiz')) set('d-allergien-notiz', p.allergien);
   // → Angebot
   set('ang-kunde',       p.name);
   set('ang-email',       p.email);
