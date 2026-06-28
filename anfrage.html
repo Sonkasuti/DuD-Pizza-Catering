@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D Pizza-Catering — Anfrage stellen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --black:  #1a1209;
+  --cream:  #fdf8f0;
+  --cream2: #f5ede0;
+  --red:    #c8341a;
+  --red-dk: #a02814;
+  --gold:   #d4a435;
+  --border: #e2d5c3;
+  --text:   #2a1f14;
+  --muted:  #8a7460;
+  --green:  #1e8a5a;
+  --green-bg: #edfaf2;
+  --ff-d: 'Playfair Display', Georgia, serif;
+  --ff-b: 'Inter', system-ui, sans-serif;
+  --r: 8px;
+}
+body { font-family: var(--ff-b); background: var(--cream); color: var(--text); min-height: 100vh; }
+
+/* HERO */
+.hero { background: var(--black); position: relative; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 120%, rgba(200,52,26,.38) 0%, transparent 70%),
+    radial-gradient(ellipse 30% 40% at 15% 90%, rgba(212,164,53,.12) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 85% 90%, rgba(212,164,53,.10) 0%, transparent 60%);
+}
+.hero-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 3.5rem 1.5rem 4.5rem; text-align: center; }
+.hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(212,164,53,.14); border: 1px solid rgba(212,164,53,.38); color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; padding: 5px 15px; border-radius: 100px; margin-bottom: 1.5rem; }
+.hero h1 { font-family: var(--ff-d); font-size: clamp(2.2rem,5.5vw,3.4rem); font-weight: 700; color: var(--cream); line-height: 1.15; letter-spacing: -.02em; margin-bottom: .5rem; }
+.hero h1 em { font-style: italic; color: var(--gold); }
+.hero-sub { font-size: 15px; font-weight: 300; color: rgba(253,248,240,.72); max-width: 460px; margin: .9rem auto 0; line-height: 1.75; }
+.ornament { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 1.75rem 0 0; color: rgba(212,164,53,.45); }
+.ornament-line { flex: 1; max-width: 70px; height: 1px; background: linear-gradient(90deg,transparent,rgba(212,164,53,.4),transparent); }
+.features { background: var(--black); border-top: 1px solid rgba(255,255,255,.07); }
+.features-inner { max-width: 680px; margin: 0 auto; padding: 1.1rem 1.5rem; display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; }
+.feature { display: flex; align-items: center; gap: 7px; color: rgba(253,248,240,.62); font-size: 13px; }
+.wave { background: var(--black); line-height: 0; }
+.wave svg { display: block; width: 100%; }
+
+/* WIZARD WRAPPER */
+.wizard-wrap { max-width: 640px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+/* PROGRESS */
+.progress-wrap { margin-bottom: 2rem; }
+.progress-steps { display: flex; align-items: center; gap: 0; margin-bottom: .6rem; }
+.p-step { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+.p-step:not(:last-child)::after { content: ''; position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background: var(--border); z-index: 0; }
+.p-step.done:not(:last-child)::after { background: var(--red); }
+.p-circle { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border); background: var(--cream); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--muted); position: relative; z-index: 1; transition: all .2s; }
+.p-step.active .p-circle { border-color: var(--red); background: var(--red); color: #fff; }
+.p-step.done .p-circle { border-color: var(--red); background: var(--red); color: #fff; }
+.p-label { font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 5px; text-align: center; }
+.p-step.active .p-label { color: var(--red); font-weight: 600; }
+.p-step.done .p-label { color: var(--red); }
+.progress-text { font-size: 12px; color: var(--muted); text-align: center; }
+
+/* CARDS */
+.w-step { display: none; }
+.w-step.active { display: block; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.1rem; box-shadow: 0 2px 8px rgba(42,31,20,.06); }
+.card-title { font-family: var(--ff-d); font-size: 1.15rem; font-weight: 600; color: var(--text); margin-bottom: 1.1rem; padding-bottom: .7rem; border-bottom: 1px solid var(--cream2); display: flex; align-items: center; gap: 10px; }
+.step-num { width: 26px; height: 26px; border-radius: 50%; background: var(--red); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--ff-b); font-size: 12px; font-weight: 600; flex-shrink: 0; }
+
+/* FIELDS */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.field { margin-bottom: .9rem; }
+.field:last-child { margin-bottom: 0; }
+.field label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.req { color: var(--red); }
+input[type=text], input[type=email], input[type=tel], input[type=number], input[type=date], input[type=time], select, textarea {
+  width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: var(--ff-b); font-size: 14px; color: var(--text); background: var(--cream);
+  transition: border-color .15s, box-shadow .15s; appearance: none;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--red); background: #fff; box-shadow: 0 0 0 3px rgba(200,52,26,.10); }
+textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a7460' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; cursor: pointer;
+}
+.input-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* CHECKBOX */
+.check-label { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); cursor: pointer; line-height: 1.5; }
+.check-label input[type=checkbox] { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--red); flex-shrink: 0; }
+
+/* SUMMARY BOX */
+.summary-box { background: var(--cream2); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; margin-bottom: 1.1rem; }
+.summary-box h4 { font-family: var(--ff-d); font-size: .95rem; font-weight: 600; margin-bottom: .75rem; color: var(--text); }
+.sum-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.sum-row:last-child { border-bottom: none; }
+.sum-label { color: var(--muted); }
+.sum-val { font-weight: 500; color: var(--text); text-align: right; max-width: 60%; }
+
+/* DATENSCHUTZ */
+.datenschutz { background: #f0f7ff; border: 1px solid #c5ddf7; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.1rem; }
+.datenschutz-title { font-size: 12px; font-weight: 600; color: #1d4ed8; margin-bottom: .4rem; display: flex; align-items: center; gap: 6px; }
+.datenschutz p { font-size: 12px; color: #374151; line-height: 1.6; }
+
+/* NAVIGATION BUTTONS */
+.wizard-nav { display: flex; gap: 10px; margin-top: 1.5rem; }
+.btn { padding: 11px 20px; border-radius: var(--r); font-family: var(--ff-b); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; display: inline-flex; align-items: center; gap: 7px; }
+.btn-next { background: var(--red); color: #fff; flex: 1; justify-content: center; box-shadow: 0 4px 12px rgba(200,52,26,.28); }
+.btn-next:hover { background: var(--red-dk); }
+.btn-back { background: transparent; color: var(--muted); border: 1.5px solid var(--border); padding: 11px 16px; }
+.btn-back:hover { border-color: var(--muted); color: var(--text); }
+.btn-submit { background: var(--red); color: #fff; flex: 1; justify-content: center; font-size: 15px; padding: 14px 20px; box-shadow: 0 4px 14px rgba(200,52,26,.32); }
+.btn-submit:hover { background: var(--red-dk); }
+
+/* ERROR */
+.field-error { font-size: 11px; color: var(--red); margin-top: 3px; display: none; }
+.field-error.show { display: block; }
+input.invalid, select.invalid, textarea.invalid { border-color: var(--red) !important; }
+
+/* SUCCESS */
+.success-box { display: none; text-align: center; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 3rem 2rem; box-shadow: 0 2px 8px rgba(42,31,20,.06); }
+.success-icon { font-size: 56px; margin-bottom: 1rem; }
+.success-box h2 { font-family: var(--ff-d); font-size: 1.7rem; color: var(--text); margin-bottom: .75rem; }
+.success-box p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+.success-contact { display: inline-block; margin-top: 1.5rem; background: var(--cream2); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 22px; font-size: 13px; line-height: 1.9; }
+.success-contact a { color: var(--red); text-decoration: none; }
+
+/* FOOTER */
+footer { background: var(--black); padding: 2rem 1.5rem; text-align: center; }
+.footer-logo { font-family: var(--ff-d); font-size: 1.15rem; font-weight: 600; color: var(--cream); margin-bottom: .4rem; }
+footer p { font-size: 12px; color: rgba(253,248,240,.42); }
+footer a { color: var(--gold); text-decoration: none; }
+
+@media(max-width:560px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .features-inner { gap: .8rem; }
+  .p-label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">🔥 Mobiles Pizza-Catering</div>
+    <h1>Ein Stück <em>Italia</em><br>zu eurem Event</h1>
+    <p class="hero-sub">Pizza frisch gebacken, duftend und live vor euren Gästen zubereitet — verschiedene Pizzasorten ganz nach euren Wünschen und Absprache.</p>
+    <div class="ornament"><div class="ornament-line"></div><span>🌿</span><div class="ornament-line"></div></div>
+  </div>
+</section>
+<div class="features">
+  <div class="features-inner">
+    <div class="feature"><span>🍕</span> Pizzasorten nach Absprache</div>
+    <div class="feature"><span>👨‍🍳</span> Live-Cooking vor Ort</div>
+    <div class="feature"><span>🎉</span> Jede Feier willkommen</div>
+  </div>
+</div>
+<div class="wave"><svg viewBox="0 0 1440 55" preserveAspectRatio="none" height="55" xmlns="http://www.w3.org/2000/svg"><path d="M0,0 C360,55 1080,55 1440,0 L1440,55 L0,55 Z" fill="#fdf8f0"/></svg></div>
+
+<!-- WIZARD -->
+<div class="wizard-wrap">
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-steps">
+      <div class="p-step active" id="ps-1">
+        <div class="p-circle">1</div>
+        <div class="p-label">Kontakt</div>
+      </div>
+      <div class="p-step" id="ps-2">
+        <div class="p-circle">2</div>
+        <div class="p-label">Event</div>
+      </div>
+      <div class="p-step" id="ps-3">
+        <div class="p-circle">3</div>
+        <div class="p-label">Wünsche</div>
+      </div>
+      <div class="p-step" id="ps-4">
+        <div class="p-circle">✓</div>
+        <div class="p-label">Absenden</div>
+      </div>
+    </div>
+    <div class="progress-text" id="progress-text">Schritt 1 von 4 — Kontaktdaten</div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-box" class="success-box">
+    <div class="success-icon">🍕</div>
+    <h2>Grazie mille!</h2>
+    <p>Eure Anfrage ist bei uns angekommen.<br>Wir melden uns innerhalb von 48 Stunden persönlich bei euch.</p>
+    <div class="success-contact">
+      <strong>D&D Pizza-Catering</strong><br>
+      Tel.: <a href="tel:01733064062">0173 3064062</a><br>
+      <a href="mailto:dudpizza@gmx.net">dudpizza@gmx.net</a>
+    </div>
+  </div>
+
+  <!-- SCHRITT 1: KONTAKT -->
+  <div class="w-step active" id="step-1">
+    <div class="card">
+      <div class="card-title"><div class="step-num">1</div> Eure Kontaktdaten</div>
+      <div class="grid2">
+        <div class="field">
+          <label>Vorname <span class="req">*</span></label>
+          <input type="text" id="f-vorname" placeholder="Max" autocomplete="given-name">
+          <div class="field-error" id="e-vorname">Bitte Vorname eingeben.</div>
+        </div>
+        <div class="field">
+          <label>Nachname <span class="req">*</span></label>
+          <input type="text" id="f-nachname" placeholder="Mustermann" autocomplete="family-name">
+          <div class="field-error" id="e-nachname">Bitte Nachname eingeben.</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>E-Mail <span class="req">*</span></label>
+          <input type="email" id="f-email" placeholder="max@beispiel.de" autocomplete="email">
+          <div class="field-error" id="e-email">Bitte gültige E-Mail eingeben.</div>
+        </div>
+        <div class="field">
+          <label>Telefon <span class="req">*</span></label>
+          <input type="tel" id="f-tel" placeholder="+49 171 ..." autocomplete="tel">
+          <div class="field-error" id="e-tel">Bitte Telefonnummer eingeben.</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Wie habt ihr von uns erfahren?</label>
+        <select id="f-quelle">
+          <option>Empfehlung / Bekannte</option>
+          <option>Instagram / Facebook</option>
+          <option>Google</option>
+          <option>Flyer / Aushang</option>
+          <option>Wir kennen euch schon</option>
+          <option>Sonstiges</option>
+        </select>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-next" onclick="goNext(1)">Weiter — Event-Details →</button>
+    </div>
+  </div>
+
+  <!-- SCHRITT 2: EVENT -->
+  <div class="w-step" id="step-2">
+    <div class="card">
+      <div class="card-title"><div class="step-num">2</div> Details zu eurem Event</div>
+      <div class="grid3">
+        <div class="field">
+          <label>Datum <span class="req">*</span></label>
+          <input type="date" id="f-datum">
+          <div class="field-error" id="e-datum">Bitte Datum wählen.</div>
+        </div>
+        <div class="field">
+          <label>Uhrzeit (Beginn)</label>
+          <input type="time" id="f-uhrzeit" value="18:00">
+        </div>
+        <div class="field">
+          <label>Personenanzahl <span class="req">*</span></label>
+          <input type="number" id="f-personen" placeholder="z.B. 50" min="1">
+          <div class="field-error" id="e-personen">Bitte Personenanzahl eingeben.</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Veranstaltungsort / Adresse <span class="req">*</span></label>
+        <input type="text" id="f-ort" placeholder="Strasse, PLZ, Ort">
+        <div class="field-error" id="e-ort">Bitte Veranstaltungsort eingeben.</div>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Art der Veranstaltung</label>
+          <select id="f-art">
+            <option>Geburtstagsfeier</option>
+            <option>Firmenfeier / Betriebsfeier</option>
+            <option>Hochzeit</option>
+            <option>Stadtfest / Strassenfest</option>
+            <option>Vereinsfest</option>
+            <option>Kindergeburtstag</option>
+            <option>Schulveranstaltung</option>
+            <option>Sonstiges</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Drinnen oder Draussen?</label>
+          <select id="f-location">
+            <option>Draussen</option>
+            <option>Drinnen</option>
+            <option>Beides moeglich</option>
+            <option>Noch nicht sicher</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Habt ihr bereits Pizzawünsche?</label>
+        <select id="f-pizzawunsch">
+          <option>Noch keine Vorstellung — wir besprechen es gerne</option>
+          <option>Ja, ich habe konkrete Wünsche (s. Anmerkungen)</option>
+          <option>Vegetarisch bevorzugt</option>
+          <option>Mix aus Fleisch und vegetarisch</option>
+        </select>
+        <div class="input-hint">Endgültige Sortenauswahl erfolgt in gemeinsamer Absprache.</div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-back" onclick="goBack(2)">← Zurück</button>
+      <button class="btn btn-next" onclick="goNext(2)">Weiter — Wünsche →</button>
+    </div>
+  </div>
+
+  <!-- SCHRITT 3: WÜNSCHE -->
+  <div class="w-step" id="step-3">
+    <div class="card">
+      <div class="card-title"><div class="step-num">3</div> Eure Wünsche &amp; Besonderheiten</div>
+      <div class="field">
+        <label>Anmerkungen / Sonderwünsche</label>
+        <textarea id="f-anmerkungen" placeholder="Besondere Pizzawünsche, Unverträglichkeiten, Ideen für den Abend — alles was euch wichtig ist..."></textarea>
+      </div>
+      <div class="field">
+        <label>Gibt es Allergien oder Unverträglichkeiten?</label>
+        <select id="f-allergien">
+          <option>Keine bekannt</option>
+          <option>Glutenunverträglichkeit (einige Gäste)</option>
+          <option>Laktoseintoleranz (einige Gäste)</option>
+          <option>Nussallergie</option>
+          <option>Vegetarische Gäste</option>
+          <option>Vegane Gäste</option>
+          <option>Halal gewünscht</option>
+          <option>Mehreres — s. Anmerkungen</option>
+        </select>
+        <div class="input-hint">Wir besprechen Details gemeinsam und finden immer eine Lösung.</div>
+      </div>
+      <div class="field">
+        <label>Wie ist die Anfahrtssituation?</label>
+        <select id="f-anfahrt">
+          <option>Problemlos — Fahrzeug kommt direkt hin</option>
+          <option>Eingeschränkt — bitte vorher absprechen</option>
+          <option>Keine Ahnung — klären wir gemeinsam</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ist ein Stromanschluss vorhanden?</label>
+        <select id="f-strom">
+          <option>Ja, vorhanden</option>
+          <option>Ja, aber unsicher wie viele Kreise</option>
+          <option>Nein / weiss ich nicht</option>
+        </select>
+        <div class="input-hint">Wir benötigen 2 separate Stromkreise (je 230V / 16A).</div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn btn-back" onclick="goBack(3)">← Zurück</button>
+      <button class="btn btn-next" onclick="goNext(3)">Weiter — Zusammenfassung →</button>
+    </div>
+  </div>
+
+  <!-- SCHRITT 4: ZUSAMMENFASSUNG & ABSENDEN -->
+  <div class="w-step" id="step-4">
+
+    <div class="summary-box">
+      <h4>📋 Eure Anfrage im Überblick</h4>
+      <div class="sum-row"><span class="sum-label">Name</span><span class="sum-val" id="sum-name">—</span></div>
+      <div class="sum-row"><span class="sum-label">E-Mail</span><span class="sum-val" id="sum-email">—</span></div>
+      <div class="sum-row"><span class="sum-label">Telefon</span><span class="sum-val" id="sum-tel">—</span></div>
+      <div class="sum-row"><span class="sum-label">Veranstaltung</span><span class="sum-val" id="sum-art">—</span></div>
+      <div class="sum-row"><span class="sum-label">Datum</span><span class="sum-val" id="sum-datum">—</span></div>
+      <div class="sum-row"><span class="sum-label">Uhrzeit</span><span class="sum-val" id="sum-uhrzeit">—</span></div>
+      <div class="sum-row"><span class="sum-label">Personen</span><span class="sum-val" id="sum-personen">—</span></div>
+      <div class="sum-row"><span class="sum-label">Ort</span><span class="sum-val" id="sum-ort">—</span></div>
+      <div class="sum-row"><span class="sum-label">Drinnen/Draussen</span><span class="sum-val" id="sum-location">—</span></div>
+      <div class="sum-row"><span class="sum-label">Allergien</span><span class="sum-val" id="sum-allergien">—</span></div>
+      <div class="sum-row"><span class="sum-label">Strom</span><span class="sum-val" id="sum-strom">—</span></div>
+      <div class="sum-row"><span class="sum-label">Anmerkungen</span><span class="sum-val" id="sum-anmerkungen">—</span></div>
+    </div>
+
+    <div class="datenschutz">
+      <div class="datenschutz-title">🔒 Datenschutzhinweis</div>
+      <p>Eure Daten werden ausschliesslich zur Bearbeitung dieser Catering-Anfrage verwendet und nicht an Dritte weitergegeben. Die Speicherung erfolgt nur für die Dauer der Geschäftsbeziehung. Ihr könnt jederzeit Auskunft, Berichtigung oder Löschung eurer Daten verlangen — einfach per Mail an <strong>dudpizza@gmx.net</strong>.</p>
+    </div>
+
+    <div class="card" style="padding: 1rem 1.25rem;">
+      <label class="check-label">
+        <input type="checkbox" id="f-datenschutz">
+        Ich habe den Datenschutzhinweis gelesen und stimme der Verarbeitung meiner Daten zur Bearbeitung dieser Anfrage zu. <span class="req">*</span>
+      </label>
+      <div class="field-error" id="e-datenschutz">Bitte Datenschutz bestätigen.</div>
+    </div>
+
+    <div class="wizard-nav">
+      <button class="btn btn-back" onclick="goBack(4)">← Zurück</button>
+      <button class="btn btn-submit" onclick="submitAnfrage()">🍕 Anfrage jetzt absenden</button>
+    </div>
+    <p style="font-size:12px; color:var(--muted); text-align:center; margin-top:12px; line-height:1.7;">Eure Anfrage geht direkt an D&D Pizza-Catering.<br>Wir antworten innerhalb von 48 Stunden.</p>
+  </div>
+
+</div><!-- /wizard-wrap -->
+
+<footer>
+  <div class="footer-logo">D&D Pizza-Catering</div>
+  <p>Tel.: <a href="tel:01733064062">0173 3064062</a> &nbsp;&middot;&nbsp; <a href="mailto:dudpizza@gmx.net">dudpizza@gmx.net</a></p>
+</footer>
+
+<script>
+var currentStep = 1;
+var totalSteps  = 4;
+
+var stepLabels = ['Kontaktdaten','Event-Details','Wünsche','Zusammenfassung & Absenden'];
+
+function goNext(step) {
+  if (!validateStep(step)) return;
+  if (step === 3) buildSummary();
+  setStep(step + 1);
+}
+function goBack(step) {
+  setStep(step - 1);
+}
+function setStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('ps-' + currentStep).classList.remove('active');
+  if (currentStep < n) document.getElementById('ps-' + currentStep).classList.add('done');
+  currentStep = n;
+  document.getElementById('step-' + n).classList.add('active');
+  document.getElementById('ps-' + n).classList.add('active');
+  document.getElementById('progress-text').textContent = 'Schritt ' + n + ' von ' + totalSteps + ' — ' + stepLabels[n-1];
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep(step) {
+  var ok = true;
+  function check(id, errId, test) {
+    var el  = document.getElementById(id);
+    var err = document.getElementById(errId);
+    var pass = test(el.value.trim());
+    el.classList.toggle('invalid', !pass);
+    err.classList.toggle('show', !pass);
+    if (!pass) ok = false;
+  }
+  if (step === 1) {
+    check('f-vorname', 'e-vorname', function(v){ return v.length > 0; });
+    check('f-nachname', 'e-nachname', function(v){ return v.length > 0; });
+    check('f-email',   'e-email',   function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); });
+    check('f-tel',     'e-tel',     function(v){ return v.length > 5; });
+  }
+  if (step === 2) {
+    check('f-datum',   'e-datum',   function(v){ return v.length > 0; });
+    check('f-personen','e-personen',function(v){ return parseInt(v) > 0; });
+    check('f-ort',     'e-ort',     function(v){ return v.length > 3; });
+  }
+  return ok;
+}
+
+function buildSummary() {
+  var d = getValues();
+  var datumF = d.datum ? (function(){ var x=new Date(d.datum); return x.getDate()+'.'+(x.getMonth()+1)+'.'+x.getFullYear(); })() : '—';
+  document.getElementById('sum-name').textContent      = d.vorname + ' ' + d.nachname;
+  document.getElementById('sum-email').textContent     = d.email;
+  document.getElementById('sum-tel').textContent       = d.tel || '—';
+  document.getElementById('sum-art').textContent       = d.art;
+  document.getElementById('sum-datum').textContent     = datumF;
+  document.getElementById('sum-uhrzeit').textContent   = d.uhrzeit + ' Uhr';
+  document.getElementById('sum-personen').textContent  = 'ca. ' + d.personen;
+  document.getElementById('sum-ort').textContent       = d.ort;
+  document.getElementById('sum-location').textContent  = d.location;
+  document.getElementById('sum-allergien').textContent = d.allergien;
+  document.getElementById('sum-strom').textContent     = d.strom;
+  document.getElementById('sum-anmerkungen').textContent = d.anmerkungen || '—';
+}
+
+function getValues() {
+  return {
+    vorname:    document.getElementById('f-vorname').value.trim(),
+    nachname:   document.getElementById('f-nachname').value.trim(),
+    email:      document.getElementById('f-email').value.trim(),
+    tel:        document.getElementById('f-tel').value.trim(),
+    quelle:     document.getElementById('f-quelle').value,
+    datum:      document.getElementById('f-datum').value,
+    uhrzeit:    document.getElementById('f-uhrzeit').value,
+    personen:   document.getElementById('f-personen').value.trim(),
+    ort:        document.getElementById('f-ort').value.trim(),
+    art:        document.getElementById('f-art').value,
+    location:   document.getElementById('f-location').value,
+    pizzawunsch:document.getElementById('f-pizzawunsch').value,
+    anmerkungen:document.getElementById('f-anmerkungen').value.trim(),
+    allergien:  document.getElementById('f-allergien').value,
+    anfahrt:    document.getElementById('f-anfahrt').value,
+    strom:      document.getElementById('f-strom').value,
+  };
+}
+
+function submitAnfrage() {
+  var ds  = document.getElementById('f-datenschutz');
+  var dsE = document.getElementById('e-datenschutz');
+  if (!ds.checked) { dsE.classList.add('show'); return; }
+  dsE.classList.remove('show');
+
+  var d = getValues();
+  var datumF = d.datum ? (function(){ var x=new Date(d.datum); return x.getDate()+'.'+(x.getMonth()+1)+'.'+x.getFullYear(); })() : '—';
+
+  var smartBlock = '##ANFRAGE##\n'
+    + 'NAME: ' + d.vorname + ' ' + d.nachname + '\n'
+    + 'EMAIL: ' + d.email + '\n'
+    + 'TEL: ' + (d.tel||'-') + '\n'
+    + 'DATUM: ' + d.datum + '\n'
+    + 'UHRZEIT: ' + d.uhrzeit + '\n'
+    + 'PERSONEN: ' + d.personen + '\n'
+    + 'ORT: ' + d.ort + '\n'
+    + 'ART: ' + d.art + '\n'
+    + 'LOCATION: ' + d.location + '\n'
+    + 'QUELLE: ' + d.quelle + '\n'
+    + 'ANMERKUNGEN: ' + (d.anmerkungen||'-') + '\n'
+    + '##ENDE##';
+
+  var mailBody = 'Neue Catering-Anfrage von ' + d.vorname + ' ' + d.nachname + ':\n\n'
+    + 'KONTAKT\n'
+    + 'Name:        ' + d.vorname + ' ' + d.nachname + '\n'
+    + 'E-Mail:      ' + d.email + '\n'
+    + 'Telefon:     ' + (d.tel||'-') + '\n'
+    + 'Quelle:      ' + d.quelle + '\n\n'
+    + 'EVENT\n'
+    + 'Datum:       ' + datumF + '\n'
+    + 'Uhrzeit:     ' + d.uhrzeit + ' Uhr\n'
+    + 'Personen:    ca. ' + d.personen + '\n'
+    + 'Ort:         ' + d.ort + '\n'
+    + 'Art:         ' + d.art + '\n'
+    + 'Location:    ' + d.location + '\n\n'
+    + 'DETAILS\n'
+    + 'Pizzawunsch: ' + d.pizzawunsch + '\n'
+    + 'Allergien:   ' + d.allergien + '\n'
+    + 'Anfahrt:     ' + d.anfahrt + '\n'
+    + 'Strom:       ' + d.strom + '\n'
+    + 'Anmerkungen: ' + (d.anmerkungen||'-') + '\n\n'
+    + '---\n' + smartBlock;
+
+  var subject = 'Neue Anfrage: ' + d.art + ' am ' + datumF + ' (' + d.personen + ' Pers.)';
+  window.location.href = 'mailto:dudpizza@gmx.net'
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body='    + encodeURIComponent(mailBody);
+
+  setTimeout(function() {
+    document.getElementById('progress-wrap').style.display = 'none';
+    document.getElementById('step-4').style.display = 'none';
+    document.getElementById('success-box').style.display  = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 900);
+}
+</script>
+</body>
+</html>
